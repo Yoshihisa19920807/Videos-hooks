@@ -1,37 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import SearchBar from './SearchBar';
-import youtube from '../apis/youtube';
 import VideoList from './VideoList';
 import VideoDeail from './VideoDetail'
+import useVideos from '../hooks/useVideos';
 
 const App = () => {
-  const [videos, setVideos] = useState([]);
-  const [selectedVideo, setSelectedVideo] = useState(null)
-
+  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [videos, search] = useVideos('meditation');
   useEffect(() => {
-    onTermSubmit('meditation');
-  }, []);
-
-  const onTermSubmit = async (term) => {
-    console.log(term)
-    const response = await youtube.get('./search', {
-      params: {
-        q: term,
-        // part: 'snippet',
-      }
-    });
-    console.log(response);
-
-    setVideos(response.data.items)
-    setSelectedVideo(response.data.items[0])
-  }
+    setSelectedVideo(videos[0])
+  }, [videos]);
 
   const onVideoSelect = (video) => {
     setSelectedVideo(video);
   }
   return (
     <div className="ui container">
-      <SearchBar onFormSubmit={onTermSubmit} />
+      <SearchBar onFormSubmit={search} />
       <div className="ui grid">
         <div className="ui row">
           {/* Width of the column out of 16 rows. Remember bootstrap. */}
